@@ -93,6 +93,21 @@
 				</executions>
 			</plugin>
 		</plugins>
+		
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>2.10</version>
+			</extension>
+		</extensions>
 	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>smmv-repo-ftp</id>
+			<url>ftp://repo.somemove.cz/maven2</url>
+		</repository>
+	</distributionManagement>
 
 </project>
