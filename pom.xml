@@ -6,7 +6,7 @@
 
 	<groupId>cz.smmv.fakturoid</groupId>
 	<artifactId>fakturoid-kt</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.1.1</version>
 
 	<packaging>jar</packaging>
 
@@ -26,7 +26,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kotlin.version>1.0.3</kotlin.version>
+		<kotlin.version>1.1.1</kotlin.version>
 	</properties>
 
 	<dependencies>
@@ -34,6 +34,7 @@
 			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-stdlib</artifactId>
 			<version>${kotlin.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -93,7 +94,7 @@
 				</executions>
 			</plugin>
 		</plugins>
-		
+
 		<extensions>
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
