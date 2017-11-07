@@ -1,27 +1,28 @@
 ﻿# Fakturoid.kt
 
+[![Release](https://jitpack.io/v/somemove/fakturoid-kt.svg?style=flat-square)](https://jitpack.io/#somemove/fakturoid-kt)
+
 A Kotlin (Java) library for API communication with web-based invoicing service [Fakturoid.cz](https://www.fakturoid.cz/). API v2 is supported only. Please see [API documentation](http://docs.fakturoid.apiary.io/) for more details.
 
 **STATUS: INCOMPLETE**
 
-## Add to your project
+## Install
 
-```
-<dependencies>
-<dependency>
-<groupId>cz.smmv.fakturoid</groupId>
-<artifactId>fakturoid-kt</artifactId>
-<version>0.0.1</version>
-</dependency>
-</dependencies>
-
-<repositories>
-<repository>
-<id>somemove</id>
-<url>http://repo.somemove.cz</url>
-</repository>
-</repositories>
-
+```groovy
+// Define the dependency version
+buildscript {
+	ext {
+		fakturoidVersion = 'THE_VERSION'
+	}
+}
+// Add the Jitpack repository
+repositories {
+	maven { url 'https://jitpack.io' }
+}
+// Add the dependency
+dependencies {
+	compile "com.github.somemove:fakturoid-kt:$fakturoidVersion"
+}
 ```
 
 ## Example

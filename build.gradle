@@ -1,0 +1,100 @@
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'project-report'
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+buildscript {
+	ext {
+		kotlinVersion = '1.+'
+		springVersion = '4.3.12.RELEASE'
+		jacksonVersion = '2.9.2'
+		jsonVersion = '20171018'
+		sl4jVersion = '1.7.+'
+		commongLoggingVersion = '1.+'
+		junitVersion = '5.0.0'
+		junitVintageVersion = '4.12.0'
+		junitPlatformVersion = '1.0.0'
+		jsonUnitVersion = '1.25.0'
+	}
+
+	repositories {
+		mavenCentral()
+		maven { url 'https://jitpack.io' }
+	}
+
+	dependencies {
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+		classpath "org.junit.platform:junit-platform-gradle-plugin:$junitPlatformVersion"
+	}
+}
+
+repositories {
+	jcenter()
+	maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+	// https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
+	compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+	// https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-reflect
+	compile "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
+
+	// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+	compile "org.slf4j:slf4j-api:$sl4jVersion"
+
+	// https://mvnrepository.com/artifact/org.springframework/spring-web
+	compile ("org.springframework:spring-web:$springVersion") {
+		exclude group: 'commons-logging', module: 'commons-logging'
+	}
+
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+	compile "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations
+	compile "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+	compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-kotlin
+	compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
+
+	// https://mvnrepository.com/artifact/org.json/json
+	compile "org.json:json:$jsonVersion"
+
+	// http://mvnrepository.com/artifact/org.junit.platform/junit-platform-launcher
+	testRuntime("org.junit.platform:junit-platform-launcher:$junitPlatformVersion")
+	// http://mvnrepository.com/artifact/org.junit.platform/junit-platform-runner
+	testRuntime("org.junit.platform:junit-platform-runner:$junitPlatformVersion")
+	// http://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
+	testCompile "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+	// http://mvnrepository.com/artifact/org.junit.vintage/junit-vintage-engine
+	testCompile("org.junit.vintage:junit-vintage-engine:$junitVintageVersion")
+
+	// https://mvnrepository.com/artifact/net.javacrumbs.json-unit/json-unit-fluent
+	testCompile ("net.javacrumbs.json-unit:json-unit-fluent:$jsonUnitVersion") {
+		exclude group: 'junit', module: 'junit'
+	}
+
+	// https://mvnrepository.com/artifact/commons-logging/commons-logging
+	testCompile "commons-logging:commons-logging:$commongLoggingVersion"
+
+}
+
+junitPlatform {
+	platformVersion '1.0.0'
+}
+
+version = '0.0.2'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+jar {
+	manifest {
+		attributes(
+			'Implementation-Title': project.name,
+			'Implementation-Version': project.version
+		)
+	}
+}
