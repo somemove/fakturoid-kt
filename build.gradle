@@ -58,6 +58,8 @@ dependencies {
 	compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-kotlin
 	compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
+	compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
 
 	// https://mvnrepository.com/artifact/org.json/json
 	compile "org.json:json:$jsonVersion"
@@ -85,7 +87,7 @@ junitPlatform {
 	platformVersion '1.0.0'
 }
 
-version = '0.0.2'
+version = '0.0.3'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

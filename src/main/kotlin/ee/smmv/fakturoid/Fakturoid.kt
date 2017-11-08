@@ -1,9 +1,13 @@
 package ee.smmv.fakturoid
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.PAYMENT_REQUIRED
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
@@ -35,7 +39,31 @@ class Fakturoid(
 			StringHttpMessageConverter(StandardCharsets.UTF_8)
 		)
 	)
+
 	private val mapper : ObjectMapper = jacksonObjectMapper()
+
+	init {
+		mapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+		mapper.setSerializationInclusion(Include.NON_NULL)
+		mapper.registerModule(JavaTimeModule())
+	}
+
+	fun create(subject : Subject) : Subject {
+		val url : URI = urlFor("subjects.json")
+		val json = mapper.writeValueAsString(subject)
+
+		val responseEntity : ResponseEntity<String> = restTemplate.postForEntity(url, HttpEntity<String>(json, headers()), String::class.java)
+
+		when (responseEntity.statusCode) {
+			CREATED -> {
+				val s = mapper.readValue<Subject>(responseEntity.body, Subject::class.java)
+				return s
+			}
+			else -> {
+				throw RuntimeException("Could not create subject")
+			}
+		}
+	}
 
 	fun fireEvent(invoiceID : Int, eventName : String) {
 		val url : URI = urlFor("invoices/$invoiceID/fire.json?event=$eventName")
@@ -53,7 +81,7 @@ class Fakturoid(
 
 	}
 
-	private fun urlFor(localPath : String) : URI = URL("${API_BASE}/${slug}/$localPath").toURI()
+	private fun urlFor(localPath : String) : URI = URL("$API_BASE/$slug/$localPath").toURI()
 
 	private fun headers(headers : HttpHeaders = HttpHeaders()) : HttpHeaders {
 		val cred : String = Base64.getEncoder().encodeToString("${email}:${apiKey}".toByteArray(StandardCharsets.UTF_8))
