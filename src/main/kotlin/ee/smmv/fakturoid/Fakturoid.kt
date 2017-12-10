@@ -1,11 +1,10 @@
 package ee.smmv.fakturoid
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod.GET
@@ -35,6 +34,8 @@ class Fakturoid(
 
 	companion object {
 		const val API_BASE : String = "https://app.fakturoid.cz/api/v2/accounts"
+
+		@JvmStatic private val TYPE_LIST_OF_SUBJECTS = object: TypeReference<List<Subject>>() {}
 	}
 
 	private val restTemplate : RestTemplate = RestTemplate(
@@ -43,7 +44,7 @@ class Fakturoid(
 		)
 	)
 
-	private val mapper : ObjectMapper = jacksonObjectMapper()
+	private val mapper : ObjectMapper = ObjectMapper()
 
 	init {
 		mapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
@@ -92,7 +93,7 @@ class Fakturoid(
 
 		return when (responseEntity.statusCode) {
 			OK -> {
-				mapper.readValue(responseEntity.body)
+				mapper.readValue(responseEntity.body, TYPE_LIST_OF_SUBJECTS)
 			}
 			else -> {
 				throw RuntimeException("Could not find subjects")
@@ -124,7 +125,7 @@ class Fakturoid(
 
 		when (responseEntity.statusCode) {
 			OK -> {
-				return mapper.readValue(responseEntity.body)
+				return mapper.readValue(responseEntity.body, TYPE_LIST_OF_SUBJECTS)
 			}
 			else -> {
 				throw RuntimeException("Could not search for subjects")

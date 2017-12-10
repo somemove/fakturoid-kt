@@ -10,7 +10,7 @@ buildscript {
 	ext {
 		kotlinVersion = '1.+'
 		springVersion = '4.3.13.RELEASE'
-		jacksonVersion = '2.9.2'
+		jacksonVersion = '2.9.3'
 		jsonVersion = '20171018'
 		sl4jVersion = '1.7.+'
 		commongLoggingVersion = '1.+'
@@ -39,8 +39,6 @@ repositories {
 dependencies {
 	// https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
 	compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
-	// https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-reflect
-	compile "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
 
 	// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
 	compile "org.slf4j:slf4j-api:$sl4jVersion"
@@ -56,8 +54,6 @@ dependencies {
 	compile "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-	// https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-kotlin
-	compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
 	compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
 
@@ -87,7 +83,7 @@ junitPlatform {
 	platformVersion '1.0.0'
 }
 
-version = '0.0.5'
+version = '0.0.5.1'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
