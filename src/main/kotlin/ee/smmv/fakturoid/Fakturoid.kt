@@ -102,18 +102,12 @@ class Fakturoid(
 
 	private fun urlFor(localPath : String) : URI = URL("$API_BASE/$slug/$localPath").toURI()
 
-	private fun urlFor(localPath: String, params: Map<String, String>) : URI {
-		val u = UriComponentsBuilder
-			.fromHttpUrl("$API_BASE/$slug/$localPath")
-
-		with (u) {
+	private fun urlFor(localPath: String, params: Map<String, String>) : URI =
+		with (UriComponentsBuilder.fromHttpUrl("$API_BASE/$slug/$localPath")) {
 			params.forEach { key, value -> queryParam(key, value) }
-		}
 
-		return u.build()
-			.encode()
-			.toUri()
-	}
+			build().encode().toUri()
+		}
 
 	private fun headers(headers : HttpHeaders = HttpHeaders()) : HttpHeaders {
 		val cred : String = Base64.getEncoder().encodeToString("$email:$apiKey".toByteArray(StandardCharsets.UTF_8))
