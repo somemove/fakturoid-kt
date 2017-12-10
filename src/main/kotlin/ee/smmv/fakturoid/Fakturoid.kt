@@ -84,6 +84,22 @@ class Fakturoid(
 		}
 	}
 
+	fun findAll() : List<Subject> {
+		val url : URI = urlFor("subjects.json")
+
+		val requestEntity : HttpEntity<String> = HttpEntity(headers())
+		val responseEntity : ResponseEntity<String> = restTemplate.exchange(url, GET, requestEntity, String::class.java)
+
+		return when (responseEntity.statusCode) {
+			OK -> {
+				mapper.readValue(responseEntity.body)
+			}
+			else -> {
+				throw RuntimeException("Could not find subjects")
+			}
+		}
+	}
+
 	fun fireEvent(invoiceID : Int, eventName : String) {
 		val url : URI = urlFor("invoices/$invoiceID/fire.json?event=$eventName")
 
