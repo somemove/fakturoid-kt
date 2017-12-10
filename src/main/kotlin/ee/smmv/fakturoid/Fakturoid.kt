@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod.GET
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.PAYMENT_REQUIRED
@@ -18,6 +20,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.net.URL
 import java.nio.charset.StandardCharsets
@@ -65,6 +68,22 @@ class Fakturoid(
 		}
 	}
 
+	fun search(query : String) : List<Subject> {
+		val url : URI = urlFor("subjects/search.json", mapOf("query" to query))
+
+		val requestEntity : HttpEntity<String> = HttpEntity(headers())
+		val responseEntity : ResponseEntity<String> = restTemplate.exchange(url, GET, requestEntity, String::class.java)
+
+		when (responseEntity.statusCode) {
+			OK -> {
+				return mapper.readValue(responseEntity.body)
+			}
+			else -> {
+				throw RuntimeException("Could not search for subjects")
+			}
+		}
+	}
+
 	fun fireEvent(invoiceID : Int, eventName : String) {
 		val url : URI = urlFor("invoices/$invoiceID/fire.json?event=$eventName")
 
@@ -83,8 +102,21 @@ class Fakturoid(
 
 	private fun urlFor(localPath : String) : URI = URL("$API_BASE/$slug/$localPath").toURI()
 
+	private fun urlFor(localPath: String, params: Map<String, String>) : URI {
+		val u = UriComponentsBuilder
+			.fromHttpUrl("$API_BASE/$slug/$localPath")
+
+		with (u) {
+			params.forEach { key, value -> queryParam(key, value) }
+		}
+
+		return u.build()
+			.encode()
+			.toUri()
+	}
+
 	private fun headers(headers : HttpHeaders = HttpHeaders()) : HttpHeaders {
-		val cred : String = Base64.getEncoder().encodeToString("${email}:${apiKey}".toByteArray(StandardCharsets.UTF_8))
+		val cred : String = Base64.getEncoder().encodeToString("$email:$apiKey".toByteArray(StandardCharsets.UTF_8))
 
 		with (headers) {
 			contentType = MediaType.APPLICATION_JSON
