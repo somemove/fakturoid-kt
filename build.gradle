@@ -9,7 +9,7 @@ apply plugin: 'org.junit.platform.gradle.plugin'
 buildscript {
 	ext {
 		kotlinVersion = '1.+'
-		springVersion = '4.3.12.RELEASE'
+		springVersion = '4.3.13.RELEASE'
 		jacksonVersion = '2.9.2'
 		jsonVersion = '20171018'
 		sl4jVersion = '1.7.+'
@@ -17,7 +17,7 @@ buildscript {
 		junitVersion = '5.0.0'
 		junitVintageVersion = '4.12.0'
 		junitPlatformVersion = '1.0.0'
-		jsonUnitVersion = '1.25.0'
+		jsonUnitVersion = '1.+'
 	}
 
 	repositories {
@@ -87,7 +87,7 @@ junitPlatform {
 	platformVersion '1.0.0'
 }
 
-version = '0.0.3'
+version = '0.0.4'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
