@@ -68,18 +68,18 @@ class Fakturoid(
 		}
 	}
 
-	fun search(query : String) : List<Subject> {
-		val url : URI = urlFor("subjects/search.json", mapOf("query" to query))
+	fun find(id : Int) : Subject? {
+		val url : URI = urlFor("subjects/$id.json")
 
 		val requestEntity : HttpEntity<String> = HttpEntity(headers())
 		val responseEntity : ResponseEntity<String> = restTemplate.exchange(url, GET, requestEntity, String::class.java)
 
-		when (responseEntity.statusCode) {
+		return when (responseEntity.statusCode) {
 			OK -> {
-				return mapper.readValue(responseEntity.body)
+				mapper.readValue<Subject>(responseEntity.body, Subject::class.java)
 			}
 			else -> {
-				throw RuntimeException("Could not search for subjects")
+				throw RuntimeException("Could not find Subject id=$id")
 			}
 		}
 	}
@@ -98,6 +98,22 @@ class Fakturoid(
 			else -> throw IllegalStateException(httpMessage)
 		}
 
+	}
+
+	fun search(query : String) : List<Subject> {
+		val url : URI = urlFor("subjects/search.json", mapOf("query" to query))
+
+		val requestEntity : HttpEntity<String> = HttpEntity(headers())
+		val responseEntity : ResponseEntity<String> = restTemplate.exchange(url, GET, requestEntity, String::class.java)
+
+		when (responseEntity.statusCode) {
+			OK -> {
+				return mapper.readValue(responseEntity.body)
+			}
+			else -> {
+				throw RuntimeException("Could not search for subjects")
+			}
+		}
 	}
 
 	private fun urlFor(localPath : String) : URI = URL("$API_BASE/$slug/$localPath").toURI()
