@@ -69,7 +69,7 @@ class Fakturoid(
 		}
 	}
 
-	fun find(id : Int) : Subject? {
+	fun findSubjectByID(id: Int): Subject? {
 		val url : URI = urlFor("subjects/$id.json")
 
 		val requestEntity : HttpEntity<String> = HttpEntity(headers())
@@ -85,7 +85,7 @@ class Fakturoid(
 		}
 	}
 
-	fun findAll() : List<Subject> {
+	fun findAllSubjects(): List<Subject> {
 		val url : URI = urlFor("subjects.json")
 
 		val requestEntity : HttpEntity<String> = HttpEntity(headers())
@@ -117,7 +117,7 @@ class Fakturoid(
 
 	}
 
-	fun search(query : String) : List<Subject> {
+	fun searchSubjects(query: String): List<Subject> {
 		val url : URI = urlFor("subjects/search.json", mapOf("query" to query))
 
 		val requestEntity : HttpEntity<String> = HttpEntity(headers())
