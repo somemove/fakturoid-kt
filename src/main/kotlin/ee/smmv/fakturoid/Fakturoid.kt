@@ -35,6 +35,7 @@ class Fakturoid(
 	companion object {
 		const val API_BASE : String = "https://app.fakturoid.cz/api/v2/accounts"
 
+		@JvmStatic private val TYPE_LIST_OF_INVOICES = object: TypeReference<List<Invoice>>() {}
 		@JvmStatic private val TYPE_LIST_OF_SUBJECTS = object: TypeReference<List<Subject>>() {}
 	}
 
@@ -52,7 +53,7 @@ class Fakturoid(
 		mapper.registerModule(JavaTimeModule())
 	}
 
-	fun create(subject : Subject) : Subject {
+	fun create(subject: Subject): Subject {
 		val url : URI = urlFor("subjects.json")
 		val json = mapper.writeValueAsString(subject)
 
@@ -115,6 +116,22 @@ class Fakturoid(
 			else -> throw IllegalStateException(httpMessage)
 		}
 
+	}
+
+	fun searchInvoices(query: String): List<Invoice> {
+		val url: URI = urlFor("invoices/search.json", mapOf("query" to query))
+
+		val requestEntity: HttpEntity<String> = HttpEntity(headers())
+		val responseEntity: ResponseEntity<String> = restTemplate.exchange(url, GET, requestEntity, String::class.java)
+
+		when (responseEntity.statusCode) {
+			OK -> {
+				return mapper.readValue(responseEntity.body, TYPE_LIST_OF_INVOICES)
+			}
+			else -> {
+				throw RuntimeException("Could not search for invoices")
+			}
+		}
 	}
 
 	fun searchSubjects(query: String): List<Subject> {
