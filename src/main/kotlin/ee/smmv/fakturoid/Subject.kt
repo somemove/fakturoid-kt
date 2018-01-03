@@ -18,7 +18,7 @@ data class Subject (
 	var bankAccount : String? = null,
 	var iban : String? = null,
 	var variableSymbol : String? = null,
-	var enableReminders : Boolean = true,
+	var enabledReminders : Boolean = true,
 	var fullName : String? = null,
 	var email : String? = null,
 	var emailCopy : String? = null,
