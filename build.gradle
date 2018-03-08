@@ -8,10 +8,10 @@ apply plugin: 'org.junit.platform.gradle.plugin'
 
 buildscript {
 	ext {
-		kotlinVersion = '1.+'
-		springVersion = '4.3.13.RELEASE'
-		jacksonVersion = '2.9.3'
-		jsonVersion = '20171018'
+		kotlinVersion = '1.2.+'
+		springVersion = '4.3.14.RELEASE'
+		jacksonVersion = '2.9.4'
+		jsonVersion = '20180130'
 		sl4jVersion = '1.7.+'
 		commongLoggingVersion = '1.+'
 		junitVersion = '5.0.0'
