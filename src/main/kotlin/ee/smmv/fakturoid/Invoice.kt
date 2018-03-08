@@ -84,5 +84,6 @@ data class Invoice(
 	var pdfUrl: String? = null,
 	var subjectUrl: String? = null,
 	var createdAt: ZonedDateTime? = null,
-	var updatedAt: ZonedDateTime? = null
+	var updatedAt: ZonedDateTime? = null,
+	var webinvoiceSeenAt: ZonedDateTime? = null
 )
