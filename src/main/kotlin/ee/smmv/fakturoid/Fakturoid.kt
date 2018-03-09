@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus.PAYMENT_REQUIRED
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.http.HttpStatus.TOO_MANY_REQUESTS
 import org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY
-import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
@@ -30,12 +30,12 @@ import java.util.Base64
 class Fakturoid(
 	private val slug: String,
 	private val email: String,
-	private val apiKey : String,
-	private val userAgent : String
+	private val apiKey: String,
+	private val userAgent: String
 ) {
 
 	companion object {
-		const val API_BASE : String = "https://app.fakturoid.cz/api/v2/accounts"
+		const val API_BASE = "https://app.fakturoid.cz/api/v2/accounts"
 
 		@JvmStatic private val TYPE_LIST_OF_INVOICES = object: TypeReference<List<Invoice>>() {}
 		@JvmStatic private val TYPE_LIST_OF_SUBJECTS = object: TypeReference<List<Subject>>() {}
@@ -43,13 +43,13 @@ class Fakturoid(
 		@JvmStatic private val TYPE_LIST_OF_ERROR_MESSAGES = object : TypeReference<List<ErrorMessages>>() {}
 	}
 
-	private val restTemplate : RestTemplate = RestTemplate(
+	private val restTemplate = RestTemplate(
 		mutableListOf<HttpMessageConverter<*>>(
 			StringHttpMessageConverter(StandardCharsets.UTF_8)
 		)
 	)
 
-	private val mapper : ObjectMapper = ObjectMapper()
+	private val mapper = ObjectMapper()
 
 	init {
 		val fakturoiSdkModule = SimpleModule()
@@ -62,7 +62,7 @@ class Fakturoid(
 	}
 
 	fun create(subject: Subject): Subject {
-		val url : URI = urlFor("subjects.json")
+		val url = urlFor("subjects.json")
 		val json = mapper.writeValueAsString(subject)
 
 		try {
@@ -85,10 +85,10 @@ class Fakturoid(
 	}
 
 	fun findSubjectByID(id: Int): Subject? {
-		val url : URI = urlFor("subjects/$id.json")
+		val url = urlFor("subjects/$id.json")
 
-		val requestEntity : HttpEntity<String> = HttpEntity(headers())
-		val responseEntity : ResponseEntity<String> = restTemplate.exchange(url, GET, requestEntity, String::class.java)
+		val requestEntity: HttpEntity<String> = HttpEntity(headers())
+		val responseEntity: ResponseEntity<String> = restTemplate.exchange(url, GET, requestEntity, String::class.java)
 
 		return when (responseEntity.statusCode) {
 			OK -> {
@@ -101,10 +101,10 @@ class Fakturoid(
 	}
 
 	fun findAllSubjects(): List<Subject> {
-		val url : URI = urlFor("subjects.json")
+		val url = urlFor("subjects.json")
 
-		val requestEntity : HttpEntity<String> = HttpEntity(headers())
-		val responseEntity : ResponseEntity<String> = restTemplate.exchange(url, GET, requestEntity, String::class.java)
+		val requestEntity: HttpEntity<String> = HttpEntity(headers())
+		val responseEntity: ResponseEntity<String> = restTemplate.exchange(url, GET, requestEntity, String::class.java)
 
 		return when (responseEntity.statusCode) {
 			OK -> {
@@ -116,10 +116,10 @@ class Fakturoid(
 		}
 	}
 
-	fun fireEvent(invoiceID : Int, eventName : String) {
-		val url : URI = urlFor("invoices/$invoiceID/fire.json?event=$eventName")
+	fun fireEvent(invoiceID: Int, eventName: String) {
+		val url = urlFor("invoices/$invoiceID/fire.json?event=$eventName")
 
-		val responseEntity : ResponseEntity<String> = restTemplate.postForEntity(url, HttpEntity<Any>(headers()), String::class.java)
+		val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, HttpEntity<Any>(headers()), String::class.java)
 
 		val httpMessage = "HTTP ${responseEntity.statusCode} ${responseEntity.statusCodeValue}"
 
@@ -133,7 +133,7 @@ class Fakturoid(
 	}
 
 	fun searchInvoices(query: String): List<Invoice> {
-		val url: URI = urlFor("invoices/search.json", mapOf("query" to query))
+		val url = urlFor("invoices/search.json", mapOf("query" to query))
 
 		val requestEntity: HttpEntity<String> = HttpEntity(headers())
 		val responseEntity: ResponseEntity<String> = restTemplate.exchange(url, GET, requestEntity, String::class.java)
@@ -149,10 +149,10 @@ class Fakturoid(
 	}
 
 	fun searchSubjects(query: String): List<Subject> {
-		val url : URI = urlFor("subjects/search.json", mapOf("query" to query))
+		val url = urlFor("subjects/search.json", mapOf("query" to query))
 
-		val requestEntity : HttpEntity<String> = HttpEntity(headers())
-		val responseEntity : ResponseEntity<String> = restTemplate.exchange(url, GET, requestEntity, String::class.java)
+		val requestEntity: HttpEntity<String> = HttpEntity(headers())
+		val responseEntity: ResponseEntity<String> = restTemplate.exchange(url, GET, requestEntity, String::class.java)
 
 		when (responseEntity.statusCode) {
 			OK -> {
@@ -168,20 +168,20 @@ class Fakturoid(
 
 	protected fun parseListOfErrorMessages(json: String): List<ErrorMessages> = mapper.readValue(json, TYPE_LIST_OF_ERROR_MESSAGES)
 
-	private fun urlFor(localPath : String) : URI = URL("$API_BASE/$slug/$localPath").toURI()
+	private fun urlFor(localPath: String): URI = URL("$API_BASE/$slug/$localPath").toURI()
 
-	private fun urlFor(localPath: String, params: Map<String, String>) : URI =
+	private fun urlFor(localPath: String, params: Map<String, String>): URI =
 		with (UriComponentsBuilder.fromHttpUrl("$API_BASE/$slug/$localPath")) {
 			params.forEach { key, value -> queryParam(key, value) }
 
 			build().encode().toUri()
 		}
 
-	private fun headers(headers : HttpHeaders = HttpHeaders()) : HttpHeaders {
-		val cred : String = Base64.getEncoder().encodeToString("$email:$apiKey".toByteArray(StandardCharsets.UTF_8))
+	private fun headers(headers: HttpHeaders = HttpHeaders()): HttpHeaders {
+		val cred = Base64.getEncoder().encodeToString("$email:$apiKey".toByteArray(StandardCharsets.UTF_8))
 
 		with (headers) {
-			contentType = MediaType.APPLICATION_JSON
+			contentType = APPLICATION_JSON
 			set("User-Agent", userAgent)
 			set("Authorization", "Basic $cred")
 		}
