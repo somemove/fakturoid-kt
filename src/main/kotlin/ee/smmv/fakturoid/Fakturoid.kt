@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
@@ -37,6 +39,8 @@ class Fakturoid(
 
 		@JvmStatic private val TYPE_LIST_OF_INVOICES = object: TypeReference<List<Invoice>>() {}
 		@JvmStatic private val TYPE_LIST_OF_SUBJECTS = object: TypeReference<List<Subject>>() {}
+
+		@JvmStatic private val TYPE_LIST_OF_ERROR_MESSAGES = object : TypeReference<List<ErrorMessages>>() {}
 	}
 
 	private val restTemplate : RestTemplate = RestTemplate(
@@ -48,8 +52,12 @@ class Fakturoid(
 	private val mapper : ObjectMapper = ObjectMapper()
 
 	init {
+		val fakturoiSdkModule = SimpleModule()
+			.addDeserializer(ErrorMessages::class.java, ErrorMessagesDeserializer())
+
 		mapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
 		mapper.setSerializationInclusion(Include.NON_NULL)
+		mapper.registerModule(fakturoiSdkModule)
 		mapper.registerModule(JavaTimeModule())
 	}
 
@@ -57,16 +65,22 @@ class Fakturoid(
 		val url : URI = urlFor("subjects.json")
 		val json = mapper.writeValueAsString(subject)
 
-		val responseEntity : ResponseEntity<String> = restTemplate.postForEntity(url, HttpEntity<String>(json, headers()), String::class.java)
+		try {
+			val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, HttpEntity<String>(json, headers()), String::class.java)
 
-		when (responseEntity.statusCode) {
-			CREATED -> {
-				val s = mapper.readValue<Subject>(responseEntity.body, Subject::class.java)
-				return s
+			when (responseEntity.statusCode) {
+				CREATED -> {
+					val s = mapper.readValue<Subject>(responseEntity.body, Subject::class.java)
+					return s
+				}
+				else -> {
+					throw FakturoidException("Could not create subject")
+						.setApiErrors(parseListOfErrorMessages(responseEntity.body))
+				}
 			}
-			else -> {
-				throw RuntimeException("Could not create subject")
-			}
+		} catch (e: HttpClientErrorException) {
+			throw FakturoidException("Could not create subject", e)
+				.setApiErrors(parseErrorMessages(e.responseBodyAsString))
 		}
 	}
 
@@ -149,6 +163,10 @@ class Fakturoid(
 			}
 		}
 	}
+
+	protected fun parseErrorMessages(json: String): ErrorMessages = mapper.readValue(json, ErrorMessages::class.java)
+
+	protected fun parseListOfErrorMessages(json: String): List<ErrorMessages> = mapper.readValue(json, TYPE_LIST_OF_ERROR_MESSAGES)
 
 	private fun urlFor(localPath : String) : URI = URL("$API_BASE/$slug/$localPath").toURI()
 
