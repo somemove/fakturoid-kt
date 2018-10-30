@@ -77,6 +77,7 @@ data class Invoice(
 	var eetCashRegister: String? = null,
 	var eetStore: String? = null,
 	var eetRecords: List<String>? = null,
+	var attachment: List<out Any>? = null,
 	var lines: List<Line>? = null,
 	var htmlUrl: String? = null,
 	var publicHtmlUrl: String? = null,
