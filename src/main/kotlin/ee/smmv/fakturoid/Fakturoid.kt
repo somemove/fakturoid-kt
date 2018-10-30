@@ -166,7 +166,7 @@ class Fakturoid(
 
 	protected fun parseErrorMessages(json: String): ErrorMessages = mapper.readValue(json, ErrorMessages::class.java)
 
-	protected fun parseListOfErrorMessages(json: String): List<ErrorMessages> = mapper.readValue(json, TYPE_LIST_OF_ERROR_MESSAGES)
+	protected fun parseListOfErrorMessages(json: String?): List<ErrorMessages> = mapper.readValue(json, TYPE_LIST_OF_ERROR_MESSAGES)
 
 	private fun urlFor(localPath: String): URI = URL("$API_BASE/$slug/$localPath").toURI()
 
