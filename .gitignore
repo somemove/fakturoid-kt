@@ -1,6 +1,7 @@
 .idea/*
 *.iml
 .gradle/*
+.vscode/*
 build/*
 out/*
 src/test/*
