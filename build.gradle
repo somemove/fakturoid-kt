@@ -40,9 +40,6 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
 	compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
 
-	// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-	compile "org.slf4j:slf4j-api:$sl4jVersion"
-
 	// https://mvnrepository.com/artifact/org.springframework/spring-web
 	compile ("org.springframework:spring-web:$springVersion") {
 		exclude group: 'commons-logging', module: 'commons-logging'
@@ -74,9 +71,7 @@ dependencies {
 		exclude group: 'junit', module: 'junit'
 	}
 
-	// https://mvnrepository.com/artifact/commons-logging/commons-logging
-	testCompile "commons-logging:commons-logging:$commongLoggingVersion"
-
+	testRuntime ("org.slf4j:slf4j-simple:$sl4jVersion")
 }
 
 junitPlatform {
