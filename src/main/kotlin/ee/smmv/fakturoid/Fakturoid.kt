@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod.GET
@@ -36,6 +38,8 @@ class Fakturoid(
 
 	companion object {
 		const val API_BASE = "https://app.fakturoid.cz/api/v2/accounts"
+
+		@JvmStatic private val LOG: Logger = LoggerFactory.getLogger(Fakturoid::class.java)
 
 		@JvmStatic private val TYPE_LIST_OF_INVOICES = object: TypeReference<List<Invoice>>() {}
 		@JvmStatic private val TYPE_LIST_OF_SUBJECTS = object: TypeReference<List<Subject>>() {}
